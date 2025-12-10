@@ -1,8 +1,8 @@
 @echo off
 setlocal enabledelayedexpansion
 echo ============================================================
-echo INSTALADOR AUTOMATIZADO - Proyecto Python + GitHub
-echo Usuario GitHub: mpacheco@dynamizatic.com
+echo INSTALADOR - Aplicacion OCR Matriculas y Cuentakilometros
+echo Python + Flask + OpenCV + Tesseract OCR
 echo ============================================================
 echo.
 

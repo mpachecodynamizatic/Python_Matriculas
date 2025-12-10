@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR - Matrículas y Cuentakilómetros</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="header-content">
+                <div>
+                    <h1>📷 Reconocimiento OCR</h1>
+                    <p>Captura matrículas y lecturas de cuentakilómetros</p>
+                </div>
+                <div class="user-section">
+                    <span class="user-name">👤 {{ username }}</span>
+                    <a href="{{ url_for('logout') }}" class="btn-logout">Cerrar Sesión</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Área de cámara -->
+        <div class="camera-section">
+            <div class="video-container">
+                <video id="video" autoplay playsinline></video>
+                <canvas id="canvas" style="display: none;"></canvas>
+            </div>
+            
+            <!-- Indicador de estado -->
+            <div id="status-indicator" class="status-indicator">
+                <span class="status-dot"></span>
+                <span id="status-text">Inicializando cámara...</span>
+            </div>
+        </div>
+
+        <!-- Botones de captura -->
+        <div class="button-section">
+            <button id="btn-matricula" class="btn btn-primary" disabled>
+                <span class="btn-icon">🚗</span>
+                Capturar Matrícula
+            </button>
+            <button id="btn-cuentakilometros" class="btn btn-secondary" disabled>
+                <span class="btn-icon">⏱️</span>
+                Capturar Cuentakilómetros
+            </button>
+        </div>
+
+        <!-- Área de resultados -->
+        <div id="resultado-container" class="resultado-container" style="display: none;">
+            <div class="resultado-header">
+                <h3>Resultado del Reconocimiento</h3>
+                <button id="btn-cerrar" class="btn-close">×</button>
+            </div>
+            <div id="resultado-contenido" class="resultado-contenido">
+                <!-- Los resultados se insertarán aquí dinámicamente -->
+            </div>
+            <div id="resultado-modo" class="resultado-modo">
+                <!-- Modo de OCR usado -->
+            </div>
+        </div>
+
+        <!-- Imagen capturada preview -->
+        <div id="preview-container" class="preview-container" style="display: none;">
+            <h3>Imagen Capturada</h3>
+            <img id="preview-image" src="" alt="Imagen capturada">
+        </div>
+
+        <!-- Loader -->
+        <div id="loader" class="loader" style="display: none;">
+            <div class="spinner"></div>
+            <p>Procesando imagen...</p>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>💡 <strong>Consejos:</strong> Mantén buena iluminación y enfoca claramente el objeto</p>
+            <p class="footer-tech">Powered by Flask + OpenCV + EasyOCR (Python puro)</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/camera.js') }}"></script>
+</body>
+</html>

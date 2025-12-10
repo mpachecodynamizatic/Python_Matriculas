@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - OCR App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 400px;
+            width: 100%;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .login-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .login-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        .login-body {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            border-left: 4px solid #c33;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .login-footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .credentials-info {
+            background: #e8f4f8;
+            border: 1px solid #b3dce6;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #31708f;
+        }
+
+        .credentials-info strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #31708f;
+        }
+
+        .credentials-info code {
+            background: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #d63384;
+        }
+
+        @media (max-width: 480px) {
+            .login-header h1 {
+                font-size: 24px;
+            }
+            
+            .login-body {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="login-icon">🔐</div>
+            <h1>OCR Application</h1>
+            <p>Matrículas y Cuentakilómetros</p>
+        </div>
+
+        <div class="login-body">
+            {% if error %}
+            <div class="error-message">
+                ❌ {{ error }}
+            </div>
+            {% endif %}
+
+            <div class="credentials-info">
+                <strong>👤 Usuarios de prueba:</strong>
+                Usuario: <code>admin</code> / Contraseña: <code>admin123</code><br>
+                Usuario: <code>user</code> / Contraseña: <code>user123</code>
+            </div>
+
+            <form method="POST" action="{{ url_for('login') }}">
+                <div class="form-group">
+                    <label for="username">👤 Usuario</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        placeholder="Ingresa tu usuario"
+                        required 
+                        autofocus
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">🔒 Contraseña</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Ingresa tu contraseña"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="btn-login">
+                    Iniciar Sesión
+                </button>
+            </form>
+        </div>
+
+        <div class="login-footer">
+            🚀 Powered by Flask + Gemini Vision | © 2025
+        </div>
+    </div>
+
+    <script>
+        // Auto-focus en el campo de usuario
+        document.getElementById('username').focus();
+
+        // Animación al presionar Enter
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const btn = document.querySelector('.btn-login');
+            btn.textContent = 'Iniciando...';
+            btn.style.opacity = '0.7';
+        });
+    </script>
+</body>
+</html>

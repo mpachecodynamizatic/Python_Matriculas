@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Vehículos - OCR App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1>📋 Gestión de Vehículos</h1>
+                <div class="user-section">
+                    <span class="user-name">👤 {{ username }}</span>
+                    <a href="{{ url_for('logout') }}" class="btn-logout">Cerrar Sesión</a>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="vehiculos-container">
+                <!-- Selector de Motor OCR -->
+                <div class="motor-selector-section">
+                    <h2>⚙️ Motor de Reconocimiento</h2>
+                    <div class="motor-selector">
+                        <div class="motor-option">
+                            <input type="radio" id="motor-tesseract" name="motor" value="tesseract" 
+                                   {% if motor_ocr == 'tesseract' %}checked{% endif %}>
+                            <label for="motor-tesseract" class="motor-label">
+                                <span class="motor-icon">🆓</span>
+                                <div class="motor-info">
+                                    <strong>Tesseract OCR</strong>
+                                    <span class="motor-desc">Gratuito - Sin límites - Offline</span>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="motor-option">
+                            <input type="radio" id="motor-ocrspace" name="motor" value="ocrspace" 
+                                   {% if motor_ocr == 'ocrspace' %}checked{% endif %}>
+                            <label for="motor-ocrspace" class="motor-label">
+                                <span class="motor-icon">☁️</span>
+                                <div class="motor-info">
+                                    <strong>OCR.space API</strong>
+                                    <span class="motor-desc">Nube - 25,000 peticiones/mes gratis</span>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="motor-option">
+                            <input type="radio" id="motor-gemini" name="motor" value="gemini" 
+                                   {% if motor_ocr == 'gemini' %}checked{% endif %}>
+                            <label for="motor-gemini" class="motor-label">
+                                <span class="motor-icon">🤖</span>
+                                <div class="motor-info">
+                                    <strong>Google Gemini 2.5</strong>
+                                    <span class="motor-desc">Mayor precisión - Requiere API Key</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <p class="motor-status">Motor actual: <strong id="motor-actual">{{ 'Tesseract OCR' if motor_ocr == 'tesseract' else ('OCR.space API' if motor_ocr == 'ocrspace' else 'Google Gemini 2.5') }}</strong></p>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="botones-accion">
+                    <a href="{{ url_for('captura') }}" class="btn btn-iniciar">
+                        <span class="btn-icon">📸</span>
+                        Iniciar Captura
+                    </a>
+                    <button id="btn-descargar" class="btn btn-descargar" {% if not vehiculos %}disabled{% endif %}>
+                        <span class="btn-icon">📥</span>
+                        Descargar Excel
+                    </button>
+                </div>
+
+                <!-- Tabla de vehículos -->
+                <div class="tabla-section">
+                    <h2>Vehículos Registrados</h2>
+                    <div class="tabla-wrapper">
+                        <table id="tabla-vehiculos" class="tabla-vehiculos">
+                            <thead>
+                                <tr>
+                                    <th>Matrícula</th>
+                                    <th>Kilometraje</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if vehiculos %}
+                                    {% for vehiculo in vehiculos %}
+                                    <tr data-index="{{ loop.index0 }}">
+                                        <td class="editable" data-field="matricula">{{ vehiculo.matricula }}</td>
+                                        <td class="editable" data-field="kilometros">{{ vehiculo.kilometros }}</td>
+                                        <td class="acciones-cell">
+                                            <button class="btn-accion btn-editar" onclick="editarVehiculo({{ loop.index0 }})" title="Editar">
+                                                <span>✏️</span>
+                                            </button>
+                                            <button class="btn-accion btn-eliminar" onclick="eliminarVehiculo({{ loop.index0 }})" title="Eliminar">
+                                                <span>🗑️</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3" class="empty-message">No hay vehículos registrados</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="tabla-info">Total: <span id="total-vehiculos">{{ vehiculos|length }}</span> vehículo(s)</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Cambiar motor OCR
+        const radios = document.querySelectorAll('input[name="motor"]');
+        const motorActual = document.getElementById('motor-actual');
+        
+        radios.forEach(radio => {
+            radio.addEventListener('change', async function() {
+                const motor = this.value;
+                
+                try {
+                    const response = await fetch('/cambiar_motor', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ motor: motor })
+                    });
+                    
+                    const resultado = await response.json();
+                    
+                    if (resultado.success) {
+                        // Actualizar texto del motor actual
+                        let nombreMotor = 'Tesseract OCR';
+                        if (motor === 'ocrspace') {
+                            nombreMotor = 'OCR.space API';
+                        } else if (motor === 'gemini') {
+                            nombreMotor = 'Google Gemini 2.5';
+                        }
+                        motorActual.textContent = nombreMotor;
+                        
+                        // Mostrar notificación
+                        alert('Motor OCR cambiado a: ' + nombreMotor);
+                    } else {
+                        alert('Error al cambiar motor: ' + resultado.error);
+                        // Revertir selección
+                        document.querySelector(`input[name="motor"]:not([value="${motor}"])`).checked = true;
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al cambiar motor: ' + error.message);
+                    // Revertir selección
+                    document.querySelector(`input[name="motor"]:not([value="${motor}"])`).checked = true;
+                }
+            });
+        });
+        
+        // Descargar Excel
+        document.getElementById('btn-descargar').addEventListener('click', function() {
+            if (this.disabled) return;
+            
+            window.location.href = '{{ url_for("descargar_excel") }}';
+        });
+        
+        // Editar vehículo
+        async function editarVehiculo(index) {
+            const row = document.querySelector(`tr[data-index="${index}"]`);
+            const matriculaCell = row.querySelector('[data-field="matricula"]');
+            const kilometrosCell = row.querySelector('[data-field="kilometros"]');
+            
+            const nuevaMatricula = prompt('Editar matrícula:', matriculaCell.textContent.trim());
+            if (nuevaMatricula === null) return; // Cancelado
+            
+            const nuevosKilometros = prompt('Editar kilometraje:', kilometrosCell.textContent.trim());
+            if (nuevosKilometros === null) return; // Cancelado
+            
+            try {
+                const response = await fetch('/editar_vehiculo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        index: index,
+                        matricula: nuevaMatricula,
+                        kilometros: nuevosKilometros
+                    })
+                });
+                
+                const resultado = await response.json();
+                
+                if (resultado.success) {
+                    // Actualizar vista
+                    matriculaCell.textContent = nuevaMatricula;
+                    kilometrosCell.textContent = nuevosKilometros;
+                    alert('Vehículo actualizado correctamente');
+                } else {
+                    alert('Error al actualizar vehículo: ' + resultado.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al actualizar vehículo: ' + error.message);
+            }
+        }
+        
+        // Eliminar vehículo
+        async function eliminarVehiculo(index) {
+            const row = document.querySelector(`tr[data-index="${index}"]`);
+            const matricula = row.querySelector('[data-field="matricula"]').textContent.trim();
+            
+            if (!confirm(`¿Eliminar vehículo con matrícula ${matricula}?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/eliminar_vehiculo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ index: index })
+                });
+                
+                const resultado = await response.json();
+                
+                if (resultado.success) {
+                    // Recargar página para actualizar índices
+                    location.reload();
+                } else {
+                    alert('Error al eliminar vehículo: ' + resultado.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al eliminar vehículo: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

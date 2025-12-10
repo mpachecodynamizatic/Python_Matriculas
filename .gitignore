@@ -1,3 +1,6 @@
+# Variables de entorno
+.env
+
 # Entorno virtual
 .venv/
 __pycache__/

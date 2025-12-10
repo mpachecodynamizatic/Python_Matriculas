@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captura de Vehículo - OCR App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="header-content">
+                <div>
+                    <h1>📷 Captura de Vehículo</h1>
+                    <p>Paso <span id="paso-actual">1</span> de 2: <span id="paso-texto">Matrícula</span></p>
+                </div>
+                <div class="user-section">
+                    <span class="user-name">👤 {{ username }}</span>
+                    <a href="{{ url_for('vehiculos') }}" class="btn-cerrar-captura">✖ Cerrar</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Botones de captura y carga -->
+        <div class="button-section">
+            <button id="btn-capturar" class="btn btn-primary btn-large" disabled>
+                <span class="btn-icon">📸</span>
+                <span id="btn-texto">Capturar Matrícula</span>
+            </button>
+            <button id="btn-cargar" class="btn btn-secondary btn-large">
+                <span class="btn-icon">📁</span>
+                <span>Cargar Imagen</span>
+            </button>
+            <button id="btn-manual" class="btn btn-manual btn-large" style="display: none;">
+                <span class="btn-icon">⌨️</span>
+                <span>Inserción Manual</span>
+            </button>
+        </div>
+
+        <!-- Área de cámara -->
+        <div class="camera-section">
+            <div class="video-container" id="video-container">
+                <video id="video" autoplay playsinline></video>
+                <canvas id="canvas" style="display: none;"></canvas>
+                <!-- Zona de arrastrar y soltar -->
+                <div id="drop-zone" class="drop-zone" style="display: none;">
+                    <div class="drop-zone-content">
+                        <span class="drop-icon">📁</span>
+                        <p class="drop-text">Arrastra una imagen aquí</p>
+                        <p class="drop-subtext">o haz clic para seleccionar</p>
+                    </div>
+                </div>
+                <input type="file" id="file-input" accept="image/*" style="display: none;">
+            </div>
+            
+            <!-- Indicador de estado -->
+            <div id="status-indicator" class="status-indicator">
+                <span class="status-dot"></span>
+                <span id="status-text">Inicializando cámara...</span>
+            </div>
+        </div>
+
+        <!-- Área de entrada manual (oculta por defecto) -->
+        <div id="manual-input-section" class="manual-input-section" style="display: none;">
+            <h3>Inserción Manual de Kilometraje</h3>
+            <div class="input-group">
+                <label for="input-kilometraje">Kilometraje:</label>
+                <input type="number" id="input-kilometraje" placeholder="Ej: 45000" min="0" max="999999">
+            </div>
+            <button id="btn-confirmar-manual" class="btn btn-primary">
+                <span class="btn-icon">✓</span>
+                <span>Confirmar</span>
+            </button>
+            <button id="btn-cancelar-manual" class="btn btn-secondary">
+                <span class="btn-icon">✗</span>
+                <span>Cancelar</span>
+            </button>
+        </div>
+
+        <!-- Botones de captura y carga -->
+        <div class="button-section">
+            <button id="btn-capturar" class="btn btn-primary btn-large" disabled>
+                <span class="btn-icon">📸</span>
+                <span id="btn-texto">Capturar Matrícula</span>
+            </button>
+            <button id="btn-cargar" class="btn btn-secondary btn-large">
+                <span class="btn-icon">📁</span>
+                <span>Cargar Imagen</span>
+            </button>
+        </div>
+
+        <!-- Resultados temporales -->
+        <div id="resultados-temp" class="resultados-temp" style="display: none;">
+            <div class="resultado-item">
+                <label>Matrícula:</label>
+                <span id="matricula-detectada">-</span>
+            </div>
+            <div class="resultado-item">
+                <label>Kilometraje:</label>
+                <span id="kilometros-detectados">-</span>
+            </div>
+        </div>
+
+        <!-- Loader -->
+        <div id="loader" class="loader" style="display: none;">
+            <div class="spinner"></div>
+            <p>Procesando imagen...</p>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>💡 <strong>Consejo:</strong> Mantén buena iluminación y enfoca claramente</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/captura.js') }}"></script>
+</body>
+</html>
