@@ -36,28 +36,16 @@ def cargar_usuarios():
 
 USUARIOS = cargar_usuarios()
 
-# Inicializar procesador OCR con motor por defecto
-# El motor se cambiará dinámicamente según la selección del usuario
+# Inicializar procesador OCR con Gemini
 ocr_gemini = None
-ocr_tesseract = None
-ocr_ocrspace = None
 
-def get_ocr_processor(motor='tesseract'):
-    """Obtiene el procesador OCR según el motor seleccionado"""
-    global ocr_gemini, ocr_tesseract, ocr_ocrspace
+def get_ocr_processor():
+    """Obtiene el procesador OCR de Gemini"""
+    global ocr_gemini
     
-    if motor == 'gemini':
-        if ocr_gemini is None:
-            ocr_gemini = OCRProcessor(motor='gemini')
-        return ocr_gemini
-    elif motor == 'ocrspace':
-        if ocr_ocrspace is None:
-            ocr_ocrspace = OCRProcessor(motor='ocrspace')
-        return ocr_ocrspace
-    else:  # tesseract
-        if ocr_tesseract is None:
-            ocr_tesseract = OCRProcessor(motor='tesseract')
-        return ocr_tesseract
+    if ocr_gemini is None:
+        ocr_gemini = OCRProcessor(motor='gemini')
+    return ocr_gemini
 
 
 def login_required(f):
@@ -113,14 +101,9 @@ def vehiculos():
     if 'vehiculos' not in session:
         session['vehiculos'] = []
     
-    # Inicializar motor OCR si no existe (por defecto: tesseract)
-    if 'motor_ocr' not in session:
-        session['motor_ocr'] = 'tesseract'
-    
     return render_template('vehiculos.html', 
                          username=session.get('username'),
-                         vehiculos=session.get('vehiculos', []),
-                         motor_ocr=session.get('motor_ocr', 'tesseract'))
+                         vehiculos=session.get('vehiculos', []))
 
 
 @app.route('/captura')
@@ -172,11 +155,8 @@ def procesar_matricula():
         # Convertir a formato OpenCV
         img_cv = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
         
-        # Obtener motor OCR de la sesión
-        motor = session.get('motor_ocr', 'tesseract')
-        ocr = get_ocr_processor(motor)
-        
-        # Procesar matrícula
+        # Procesar matrícula con Gemini
+        ocr = get_ocr_processor()
         resultado = ocr.procesar_matricula(img_cv)
         
         return jsonify(resultado)
@@ -232,13 +212,9 @@ def procesar_cuentakilometros():
         # Convertir a formato OpenCV
         img_cv = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
         
-        # Obtener motor OCR de la sesión
-        motor = session.get('motor_ocr', 'tesseract')
-        app.logger.info(f"Procesando con motor: {motor}")
-        
-        ocr = get_ocr_processor(motor)
-        
-        # Procesar cuentakilómetros
+        # Procesar cuentakilómetros con Gemini
+        app.logger.info("Procesando con motor: Gemini")
+        ocr = get_ocr_processor()
         resultado = ocr.procesar_cuentakilometros(img_cv)
         
         app.logger.info(f"Resultado OCR: {resultado}")
@@ -262,39 +238,6 @@ def health_check():
         'status': 'ok',
         'message': 'Aplicación OCR funcionando correctamente'
     })
-
-
-@app.route('/cambiar_motor', methods=['POST'])
-@login_required
-def cambiar_motor():
-    """
-    Cambia el motor OCR seleccionado por el usuario.
-    """
-    try:
-        data = request.get_json()
-        motor = data.get('motor', 'tesseract')
-        
-        if motor not in ['gemini', 'tesseract', 'ocrspace']:
-            return jsonify({
-                'success': False,
-                'error': 'Motor no válido'
-            }), 400
-        
-        # Guardar en sesión
-        session['motor_ocr'] = motor
-        session.modified = True
-        
-        return jsonify({
-            'success': True,
-            'motor': motor
-        })
-    
-    except Exception as e:
-        app.logger.error(f"Error cambiando motor: {str(e)}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
 
 
 @app.route('/agregar_vehiculo', methods=['POST'])

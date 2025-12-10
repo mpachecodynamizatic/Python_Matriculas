@@ -1,6 +1,6 @@
-# Aplicación OCR para Matrículas y Cuentakilómetros
+# Aplicación OCR para Matrículas y Cuenta kilómetros
 
-Aplicación web desarrollada con Flask que permite capturar imágenes desde la cámara del dispositivo y extraer texto mediante **IA**.
+Aplicación web desarrollada con Flask que permite capturar imágenes desde la cámara del dispositivo y extraer texto mediante **Google Gemini 2.5 Flash**.
 
 ## 🚀 Demo en Vivo
 
@@ -14,7 +14,7 @@ Aplicación web desarrollada con Flask que permite capturar imágenes desde la c
 
 ## Características
 
-- ✅ **Triple Motor OCR**: Elige entre Tesseract, OCR.space API o Gemini 2.5 Flash
+- ✅ **Google Gemini 2.5 Flash**: IA de alta precisión para OCR
 - ✅ **Sistema de gestión de vehículos** con tabla y exportación Excel
 - ✅ **Autenticación de usuarios** con sistema de login
 - ✅ **Captura secuencial** de matrícula y kilometraje
@@ -24,37 +24,18 @@ Aplicación web desarrollada con Flask que permite capturar imágenes desde la c
 - ✅ Captura de imágenes en tiempo real desde la cámara
 - ✅ Reconocimiento de matrículas europeas
 - ✅ Lectura de cuentakilómetros digitales
-- ✅ **Tesseract OCR**: Gratuito, sin límites, offline
-- ✅ **OCR.space API**: 25,000 peticiones/mes gratis en la nube
-- ✅ **Gemini 2.5 Flash**: Alta precisión (95%+), requiere API Key
 - ✅ **Descarga de datos en Excel** (.xlsx)
 - ✅ Interfaz web responsive
 - ✅ **Soporte HTTPS para acceso móvil**
-- ✅ **Acceso desde red local** (WiFi)
 
-## Motores OCR Disponibles
-
-### 🆓 Tesseract OCR (Por defecto)
-- **Gratuito** y sin límites
-- **Offline** - No requiere internet
-- **Precisión**: 70-80%
-- **Velocidad**: Rápido (~0.5s)
-- ⚠️ Requiere instalación adicional en Windows
-
-### ☁️ OCR.space API (NUEVO)
-- **25,000 peticiones/mes gratis**
-- **En la nube** - Requiere internet
-- **Precisión**: 80-85%
-- **Velocidad**: Medio (~2-3s)
-- ✅ **Sin tarjeta de crédito**
-- ✅ API key gratuita incluida por defecto
+## Motor OCR
 
 ### 🤖 Google Gemini 2.5 Flash
 - **Alta precisión**: 95%+
 - **Requiere API Key** (gratuita con límites)
 - **Online** - Requiere conexión
-- **Velocidad**: Medio (~1-2s)
-- ⚠️ Cuota limitada
+- **Velocidad**: Rápido (~1-2s)
+- Obtén tu API Key en: https://makersuite.google.com/app/apikey
 
 ## Requisitos Previos
 
@@ -254,10 +235,7 @@ Python_Matriculas/
 ## Tecnologías Utilizadas
 
 - **Backend**: Flask 3.0.0
-- **OCR/IA**: 
-  - Tesseract OCR (pytesseract 0.3.10)
-  - OCR.space API (requests 2.31.0)
-  - Google Gemini 2.5 Flash
+- **OCR/IA**: Google Gemini 2.5 Flash Vision
 - **Procesamiento**: OpenCV, Pillow, NumPy
 - **Exportación**: openpyxl 3.1.2 (Excel)
 - **Frontend**: HTML5, CSS3, JavaScript (MediaDevices API)
@@ -292,8 +270,7 @@ Python_Matriculas/
 
 4. Añade **Variables de Entorno**:
    ```
-   GEMINI_API_KEY=tu_api_key_aqui (opcional)
-   OCRSPACE_API_KEY=K84346862088957
+   GEMINI_API_KEY=tu_api_key_aqui (REQUERIDO)
    LOGIN_USERS=admin:admin123,user:user123
    SECRET_KEY=(déjalo vacío, Render lo generará)
    PYTHON_VERSION=3.11.0
@@ -307,7 +284,7 @@ Python_Matriculas/
 - ⏰ El servicio se "duerme" después de 15 minutos sin actividad
 - 🐌 Primera carga después de dormir: ~30 segundos
 - 💾 750 horas/mes de tiempo activo
-- 🚫 Tesseract OCR no está disponible (usa OCR.space o Gemini)
+- 🔑 Requiere API Key de Gemini configurada
 
 ### 📝 Archivos de Configuración para Render
 

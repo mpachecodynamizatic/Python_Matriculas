@@ -13,7 +13,5 @@ services:
         generateValue: true
       - key: GEMINI_API_KEY
         sync: false
-      - key: OCRSPACE_API_KEY
-        value: K84346862088957
       - key: LOGIN_USERS
         value: admin:admin123,user:user123
