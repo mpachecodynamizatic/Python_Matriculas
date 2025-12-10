@@ -19,3 +19,7 @@ desktop.ini
 *.tmp
 *.temp
 ~*
+
+# Certificados SSL (solo para desarrollo local)
+cert.pem
+key.pem

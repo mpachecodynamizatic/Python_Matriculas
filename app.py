@@ -566,3 +566,6 @@ if __name__ == '__main__':
         threaded=True,
         ssl_context=ssl_context
     )
+
+# Para producción con gunicorn, no se ejecuta el bloque if __name__
+# Gunicorn usa directamente la variable 'app'

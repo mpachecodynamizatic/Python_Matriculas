@@ -2,6 +2,16 @@
 
 Aplicación web desarrollada con Flask que permite capturar imágenes desde la cámara del dispositivo y extraer texto mediante **IA**.
 
+## 🚀 Demo en Vivo
+
+**Accede a la aplicación**: [https://python-matriculas-ocr.onrender.com](https://python-matriculas-ocr.onrender.com)
+
+**Credenciales de prueba**:
+- Usuario: `admin` / Contraseña: `admin123`
+- Usuario: `user` / Contraseña: `user123`
+
+⚠️ **Nota**: La primera carga puede tardar ~30 segundos (el servicio gratuito se duerme después de 15 min sin uso).
+
 ## Características
 
 - ✅ **Triple Motor OCR**: Elige entre Tesseract, OCR.space API o Gemini 2.5 Flash
@@ -9,6 +19,8 @@ Aplicación web desarrollada con Flask que permite capturar imágenes desde la c
 - ✅ **Autenticación de usuarios** con sistema de login
 - ✅ **Captura secuencial** de matrícula y kilometraje
 - ✅ **Drag & Drop**: Arrastra imágenes o usa la cámara
+- ✅ **Entrada manual** de kilometraje como alternativa
+- ✅ **Editar/Eliminar** vehículos registrados
 - ✅ Captura de imágenes en tiempo real desde la cámara
 - ✅ Reconocimiento de matrículas europeas
 - ✅ Lectura de cuentakilómetros digitales
@@ -244,11 +256,66 @@ Python_Matriculas/
 - **Backend**: Flask 3.0.0
 - **OCR/IA**: 
   - Tesseract OCR (pytesseract 0.3.10)
+  - OCR.space API (requests 2.31.0)
   - Google Gemini 2.5 Flash
 - **Procesamiento**: OpenCV, Pillow, NumPy
 - **Exportación**: openpyxl 3.1.2 (Excel)
 - **Frontend**: HTML5, CSS3, JavaScript (MediaDevices API)
 - **Seguridad**: Flask Sessions, HTTPS, python-dotenv
+- **Servidor Producción**: Gunicorn 21.2.0
+
+## 🌐 Despliegue en Render (Producción)
+
+### Opción 1: Deploy Automático (Recomendado)
+
+1. **Fork/Clone el repositorio** en tu cuenta de GitHub
+2. Ve a [render.com](https://render.com) y crea una cuenta gratuita
+3. Click en "New +" → "Web Service"
+4. Conecta tu repositorio de GitHub
+5. Render detectará automáticamente `render.yaml` y configurará todo
+6. Click en "Apply" y luego "Create Web Service"
+7. Espera 5-10 minutos mientras se despliega
+8. ¡Listo! Tu app estará en: `https://tu-app.onrender.com`
+
+### Opción 2: Configuración Manual
+
+1. En Render, selecciona "New Web Service"
+2. Conecta tu repositorio de GitHub
+3. Configura:
+   - **Name**: `python-matriculas-ocr` (o tu nombre preferido)
+   - **Environment**: `Python 3`
+   - **Region**: `Frankfurt` (más cercano a Europa)
+   - **Branch**: `master`
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `gunicorn app:app`
+   - **Plan**: `Free`
+
+4. Añade **Variables de Entorno**:
+   ```
+   GEMINI_API_KEY=tu_api_key_aqui (opcional)
+   OCRSPACE_API_KEY=K84346862088957
+   LOGIN_USERS=admin:admin123,user:user123
+   SECRET_KEY=(déjalo vacío, Render lo generará)
+   PYTHON_VERSION=3.11.0
+   ```
+
+5. Click en "Create Web Service"
+6. Espera el despliegue (5-10 minutos)
+
+### ⚠️ Limitaciones del Plan Gratuito de Render
+
+- ⏰ El servicio se "duerme" después de 15 minutos sin actividad
+- 🐌 Primera carga después de dormir: ~30 segundos
+- 💾 750 horas/mes de tiempo activo
+- 🚫 Tesseract OCR no está disponible (usa OCR.space o Gemini)
+
+### 📝 Archivos de Configuración para Render
+
+El proyecto ya incluye:
+- ✅ `Procfile`: Define el comando de inicio con Gunicorn
+- ✅ `render.yaml`: Configuración automática de Render
+- ✅ `requirements.txt`: Dependencias con Gunicorn incluido
+- ✅ `.gitignore`: Excluye archivos sensibles
 
 ## Documentación Adicional
 
