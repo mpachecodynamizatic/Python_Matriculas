@@ -14,10 +14,20 @@ def get_gemini_model():
     """Obtiene el modelo de Gemini configurado"""
     api_key = os.getenv('GEMINI_API_KEY')
     if not api_key:
-        raise ValueError("No se encontró GEMINI_API_KEY en las variables de entorno")
+        error_msg = "No se encontró GEMINI_API_KEY en las variables de entorno"
+        print(f"ERROR: {error_msg}")
+        print(f"Variables de entorno disponibles: {list(os.environ.keys())}")
+        raise ValueError(error_msg)
     
-    genai.configure(api_key=api_key)
-    return genai.GenerativeModel('gemini-2.5-flash')
+    print(f"INFO: Configurando Gemini con API Key: {api_key[:10]}...")
+    try:
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-2.0-flash-exp')
+        print("INFO: Modelo Gemini configurado correctamente")
+        return model
+    except Exception as e:
+        print(f"ERROR al configurar Gemini: {str(e)}")
+        raise
 
 class OCRProcessor:
     def __init__(self, motor='gemini'):
@@ -30,11 +40,15 @@ class OCRProcessor:
         self.motor = motor
         self.model = None
         
+        print(f"INFO: Inicializando OCRProcessor con motor: {motor}")
         if motor == 'gemini':
             try:
                 self.model = get_gemini_model()
+                print("INFO: OCRProcessor inicializado correctamente")
             except Exception as e:
-                raise ValueError(f"No se pudo inicializar Gemini: {e}")
+                error_msg = f"No se pudo inicializar Gemini: {e}"
+                print(f"ERROR: {error_msg}")
+                raise ValueError(error_msg)
     
     def extraer_texto_ocr(self, imagen_path, tipo_ocr):
         """
@@ -52,15 +66,19 @@ class OCRProcessor:
     def _extraer_texto_gemini(self, imagen_path, tipo_ocr):
         """Extrae texto usando Gemini Vision API"""
         try:
+            print(f"INFO: Procesando imagen con Gemini - Tipo: {tipo_ocr}")
+            
             # Cargar imagen (puede ser ruta o array numpy)
             if isinstance(imagen_path, str):
                 # Es una ruta de archivo
                 img = Image.open(imagen_path)
+                print(f"INFO: Imagen cargada desde archivo: {imagen_path}")
             elif isinstance(imagen_path, np.ndarray):
                 # Es un array de OpenCV (BGR)
                 # Convertir de BGR a RGB
                 img_rgb = cv2.cvtColor(imagen_path, cv2.COLOR_BGR2RGB)
                 img = Image.fromarray(img_rgb)
+                print(f"INFO: Imagen convertida desde numpy array - Shape: {imagen_path.shape}")
             else:
                 raise ValueError("imagen_path debe ser una ruta de archivo o array numpy")
             
@@ -78,10 +96,13 @@ class OCRProcessor:
                 Si no detectas números claros del odómetro, responde 'NO_DETECTADO'."""
             
             # Generar contenido con Gemini
+            print(f"INFO: Enviando petición a Gemini API...")
             response = self.model.generate_content([prompt, img])
+            print(f"INFO: Respuesta recibida de Gemini")
             
             # Procesar respuesta
             texto = response.text.strip()
+            print(f"INFO: Texto extraído: '{texto}'")
             
             # Validar respuesta
             if not texto or texto == 'NO_DETECTADO':
@@ -105,11 +126,16 @@ class OCRProcessor:
             }
             
         except Exception as e:
+            error_msg = str(e)
+            print(f"ERROR en _extraer_texto_gemini: {error_msg}")
+            print(f"Tipo de error: {type(e).__name__}")
+            import traceback
+            traceback.print_exc()
             return {
                 'texto': '',
                 'confianza': 0.0,
                 'metodo': 'gemini',
-                'error': str(e)
+                'error': error_msg
             }
     
     def limpiar_matricula(self, texto):

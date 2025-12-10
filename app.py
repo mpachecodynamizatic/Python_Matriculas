@@ -44,7 +44,13 @@ def get_ocr_processor():
     global ocr_gemini
     
     if ocr_gemini is None:
-        ocr_gemini = OCRProcessor(motor='gemini')
+        app.logger.info("Inicializando OCR Processor...")
+        try:
+            ocr_gemini = OCRProcessor(motor='gemini')
+            app.logger.info("OCR Processor inicializado correctamente")
+        except Exception as e:
+            app.logger.error(f"Error al inicializar OCR Processor: {str(e)}")
+            raise
     return ocr_gemini
 
 
