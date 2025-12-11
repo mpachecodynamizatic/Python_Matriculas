@@ -83,25 +83,6 @@ function detenerCamara() {
     }
 }
 
-// Event listener para el botón capturar
-btnCapturar.addEventListener('click', async function() {
-    if (usingCamera) {
-        // Modo cámara: capturar
-        if (pasoActual === 1) {
-            await capturarMatricula();
-        } else {
-            await capturarKilometraje();
-        }
-    } else {
-        // Modo imagen cargada: procesar
-        if (pasoActual === 1) {
-            await procesarMatriculaImagen();
-        } else {
-            await procesarKilometrajeImagen();
-        }
-    }
-});
-
 // Capturar matrícula (paso 1)
 async function capturarMatricula() {
     try {
