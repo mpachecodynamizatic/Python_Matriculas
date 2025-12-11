@@ -173,8 +173,8 @@ header p {
     gap: 20px;
     padding: 30px;
     justify-content: center;
+    align-items: stretch;
     flex-wrap: wrap;
-    align-items: center;
 }
 
 .btn {
