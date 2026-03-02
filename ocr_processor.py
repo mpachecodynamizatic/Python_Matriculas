@@ -22,7 +22,7 @@ def get_gemini_model():
     print(f"INFO: Configurando Gemini con API Key: {api_key[:10]}...")
     try:
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel('gemini-2.0-flash-exp')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         print("INFO: Modelo Gemini configurado correctamente")
         return model
     except Exception as e:

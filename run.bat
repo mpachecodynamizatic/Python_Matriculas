@@ -27,9 +27,7 @@ echo los modelos de reconocimiento (aprox. 100-200MB).
 echo.
 echo Este proceso solo ocurre una vez.
 echo Los modelos se guardan en: ~/.EasyOCR/model/
-echo.
-echo Presiona cualquier tecla para continuar...
-pause >nul
+
 echo.
 
 echo [INFO] Iniciando aplicacion Flask...
