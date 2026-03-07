@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Entornos virtuales
+pip-log.txt
+pip-delete-this-directory.txt
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Certificados SSL (no necesarios en producción)
+cert.pem
+key.pem
+
+# Variables de entorno locales
+.env
+.env.local
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Documentación y scripts locales
+README.md
+CLAUDE.md
+*.md
+run.bat
+verificar_instalacion.py
+
+# Configuración de otros servicios
+render.yaml
+Procfile
+
+# Logs y datos temporales
+*.log
+logs/
+data/
+temp/
+tmp/
