@@ -9,12 +9,8 @@ ENV PYTHONUNBUFFERED=1 \
 
 # Instalar dependencias del sistema necesarias para OpenCV y healthcheck
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender-dev \
-    libgomp1 \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
@@ -42,11 +38,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 
 # Comando de inicio con gunicorn
 # Coolify inyectará la variable PORT automáticamente
-CMD gunicorn app:app \
-    --bind 0.0.0.0:${PORT:-5002} \
-    --workers 2 \
-    --threads 2 \
-    --timeout 120 \
-    --access-logfile - \
-    --error-logfile - \
-    --log-level info
+# Usando formato JSON array para mejor manejo de señales del sistema
+CMD ["sh", "-c", "gunicorn app:app --bind 0.0.0.0:${PORT:-5002} --workers 2 --threads 2 --timeout 120 --access-logfile - --error-logfile - --log-level info"]
