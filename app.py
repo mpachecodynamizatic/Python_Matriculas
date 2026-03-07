@@ -246,6 +246,24 @@ def health_check():
     })
 
 
+@app.route('/debug/config', methods=['GET'])
+def debug_config():
+    """
+    Endpoint de debug para verificar configuración (solo para desarrollo).
+    NO usar en producción sin autenticación adicional.
+    """
+    api_key = os.getenv('GEMINI_API_KEY', '')
+    return jsonify({
+        'gemini_api_key_configured': bool(api_key),
+        'gemini_api_key_length': len(api_key) if api_key else 0,
+        'gemini_api_key_preview': f"{api_key[:8]}...{api_key[-4:]}" if len(api_key) > 12 else 'TOO_SHORT',
+        'secret_key_configured': bool(os.getenv('SECRET_KEY')),
+        'login_users_configured': bool(os.getenv('LOGIN_USERS')),
+        'port': os.getenv('PORT', '5002'),
+        'environment_vars_count': len([k for k in os.environ.keys() if not k.startswith('_')])
+    })
+
+
 @app.route('/agregar_vehiculo', methods=['POST'])
 @login_required
 def agregar_vehiculo():
